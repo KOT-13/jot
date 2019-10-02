@@ -4,6 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 /**
  * Class Contact
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Contact extends Model
 {
+    use Searchable;
+
     protected $guarded = [];
 
     protected $dates = ['birthday'];
@@ -21,6 +24,15 @@ class Contact extends Model
     public function path()
     {
         return '/contacts/' . $this->id;
+    }
+
+    /**
+     * @param $query
+     * @return mixed
+     */
+    public function scopeBirthdays($query)
+    {
+        return $query->whereRaw('birthday like "%-' . now()->format('m') . '-%"');
     }
 
     /**
